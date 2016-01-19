@@ -43,6 +43,9 @@
 #include "DataFlashSizes.h"
 #include <SPI.h>
 
+//#define DATAFLASH_D_SERIES // If using a AT45DBxxxD series chip
+#define DATAFLASH_E_SERIES // If using an AT45DBxxxE series chip
+
 /**
  * @addtogroup AT45DBxxxD
  * @{
@@ -89,7 +92,7 @@
  * @{
  **/
 /** Chip select (CS) **/
-#define AT45_SS_PIN     10
+#define AT45_SS_PIN     10  // LPM may need to redefine this
 /** Reset (Reset) **/
 #define AT45_RESET_PIN  -1
 /** Write protect (WP) **/
@@ -105,6 +108,13 @@
  * @{
  **/
 /**
+ * LPM Note: the E-series chips have a 2-byte status register, but bit 7
+ * of byte 1 and byte 2 both contain the RDY/BUSY status (1 = ready). The
+ * two bytes will be read out in sequence, repeatedly, as long as Chip 
+ * Select is held high and the CLK continues to pulse. You will have to 
+ * keep track of whether Byte 1 or Byte 2 is currently coming across when
+ * checking for status values besides RDY/BUSY (bit 7).
+ *
  * Ready/busy status is indicated using bit 7 of the status register.
  * If bit 7 is a 1, then the device is not busy and is ready to accept
  * the next command. If bit 7 is a 0, then the device is in a busy
@@ -116,6 +126,8 @@
  * If this bit is equal to 0, then the data in the main memory page
  * matches the data in the buffer. If it's 1 then at least 1 byte in
  * the main memory page does not match the data in the buffer.
+ * LPM note: this only applies to Byte 1 bit 6 of the E-series status
+ * register.
  **/
 #define AT45_COMPARE 0x40
 /**
@@ -124,12 +136,15 @@
  * disabled, either by software-controlled method or
  * hardware-controlled method. 1 means that the sector protection has
  * been enabled and 0 that it has been disabled.
+ * LPM note: On the E-series, the above is true for Byte 1 of the status
+ * register.
  **/
 #define AT45_PROTECT 0x02
 /**
  * Bit 0 indicates whether the page size of the main memory array is
- * configured for "power of 2" binary page size (512 bytes) (bit=1) or
- * standard %Dataflash page size (528 bytes) (bit=0).
+ * configured for "power of 2" binary page size (256 bytes) (bit=1) or
+ * standard %Dataflash page size (264 bytes) (bit=0).
+ * LPM note: Only applies to Byte 1 Bit 0 on E-series devices.
  **/
 #define AT45_PAGESIZE_PWR2 0x01
 /**
@@ -139,8 +154,10 @@
  * densities of %Dataflash devices. The device density is not the same
  * as the density code indicated in the JEDEC device ID information.
  * The device density is provided only for backward compatibility.
+ * LPM note: Only applies to Byte 1 of the status register on E-series
+ * devices. The value for the AT45DB641E is 1111b, so use 0x3C below
  **/
-#define AT45_SIZE_CODE 0x2C
+#define AT45_SIZE_CODE 0x2C  // 0x2C for AT45DB161D, 0x3C for AT45DB641E
 /**
  * @}
  **/
@@ -156,10 +173,13 @@
  *   - AT45DB321D 128
  *   - AT45DB642D 256
  *
+ *   - AT45DB641E 1024
+ *
  * On every %Dataflash, the first 8 pages belongs to the sectod 0a. It's followed 
  * by sector 0b which holds only (P-8) pages (248 on an AT45DB161D). Then comes N-1 
  * (N is the number of sectors) sectors of size P numbered from 1 to N-1 (included).
  * @see chapter titled "Memory Array" in the corresponding %Dataflash datasheet.
+ * For the AT45DB641E sector 0a is 8 pages, 0b is 1016 pages.
  * @{
  **/
 /**

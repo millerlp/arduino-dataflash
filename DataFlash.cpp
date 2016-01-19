@@ -1,6 +1,6 @@
 /**************************************************************************//**
  * @file DataFlash.cpp
- * @brief AT45DBxxxD Atmel Dataflash library for Arduino.
+ * @brief AT45DBxxxD Atmel Dataflash, and maybe AT45DBxxxE library for Arduino.
  *
  * @par Copyright: 
  * - Copyright (C) 2010-2011 by Vincent Cruz.
@@ -40,7 +40,11 @@
  *    - Fixed a serious bug where accessing any pin set to -1 can cause random memory
  *      corruption (the Arduino pin functions like digitalWrite() have no range
  *      checking).
- * 
+ *
+ *
+ *  - 2016-01-18 LPM adding code to deal with AT45DBxxxE series chips
+ *
+ *
  * @par Licence: GPLv3
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,15 +79,50 @@
  * @defgroup AT45DBxxxD Atmel Dataflash library for Arduino.
  * @{
  **/
- 
+
+#ifdef DATAFLASH_D_SERIES
 /* No need to put this into PROGMEM */
 const DataFlash::AddressingInfos DataFlash::m_infos =
 {
-	/* 1   2   4   8  16  32  64 */
-	{  9,  9,  9,  9, 10, 10, 11 },
-	{  9, 10, 11, 12, 12, 13, 13 },
-	{  2,  3,  3,  4,  4,  6,  5 }
+    /* LPM notes
+     The magic numbers below are the number of buffer address bits,
+     number of page address bits, and number of sector address bits
+     for the various memory sizes. But note that these are likely 
+     specific to the AT45DBxxxD series, and will not work for the
+     AT45DBxxxE series. 
+     The appropriate entry to use in this
+     array is determined by reading the device status register and
+     looking at bits 5,4,3,2 to determine the device density, and
+     then calculating an index into these arrays based on the value.
+     This process
+     takes place near the end of the setup() function below.
+	/* 1   2   4   8  16  32  64  <- Mbit size of D-series chips */
+	{  9,  9,  9,  9, 10, 10, 11 }, // buffer address bit size
+	{  9, 10, 11, 12, 12, 13, 13 }, // page address bit size
+	{  2,  3,  3,  4,  4,  6,  5 }  // sector address bit size (part of page address)
 };
+#endif
+
+#ifdef DATAFLASH_E_SERIES
+const DataFlash::AddressingInfos DataFlash::m_infos =
+{
+    /* LPM notes
+     The magic numbers below are the number of buffer address bits,
+     number of page address bits, and number of sector address bits
+     for the various memory sizes on the E-series chips. 
+     The appropriate entry to use in this
+     array is determined by reading the device status register and
+     looking at bits 5,4,3,2 to determine the device density, and
+     then calculating an index into these arrays based on the value.
+     This process
+     takes place near the end of the setup() function below.
+    */
+    /* 1   2   4   8  16  32  64  <- Mbit size of E-series chips */
+    {  0,  9,  9,  9, 10, 10,  9 },  // buffer address bit size
+    {  0, 10, 11, 12, 12, 13, 15 },  // page address bit size
+    {  0,  3,  3,  4,  4,  6,  5 }   // sector address bit size (part of page address)
+};
+#endif
 
 /**
  * Constructor
@@ -258,6 +297,8 @@ void DataFlash::waitUntilReady()
 /** 
  * Read status register.
  * @return The content of the status register.
+ * This will currently only read Byte 1 of E-series devices, which 
+ * have 2 status register bytes.
  * **/
 uint8_t DataFlash::status()
 {

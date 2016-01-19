@@ -19,6 +19,7 @@
  * - Version 1.x, 2010-2011.
  * - Version 2.0, 30 Aug 2011.
  * - Version 2.2, 29 Dec 2011.
+ * - Added AT45DB641E 2016-01-18                                                                            
  *
  * @par Licence: GPLv3
  * This program is free software: you can redistribute it and/or modify
@@ -214,6 +215,40 @@
 
 /** @} **/
 /** @} **/
+
+
+// LPM additions for newer AT45DBxxxE series
+
+/**
+ * @addtogroup AT45DBxxxE
+ * @{
+ **/
+
+/**
+ * @defgroup AT45DB641E_size AT45DB641E size specification.
+ * @{
+ **/
+/** Page size. **/
+#define DF_45DB641E_PAGESIZE     264
+/** Block size. **/
+#define DF_45DB641E_BLOCKSIZE    (8 * DF_45DB641E_PAGESIZE)
+/** Sector size. **/
+#define DF_45DB641E_SECTORSIZE   (32 * DF_45DB641E_BLOCKSIZE)
+/** Page count. **/
+#define DF_45DB641E_PAGES        32768
+/** Block count. **/
+#define DF_45DB641E_BLOCKS       4096
+/** Sector count. **/
+#define DF_45DB641E_SECTORS      32
+/** Global size. **/
+#define DF_45DB641E_SIZE         (DF_45DB641E_PAGES * DF_45DB641E_PAGESIZE)
+/** Sector 0x0A page count. */
+#define DF_45DB641E_S0A_PAGES    8
+/** @} **/
+
+
+/** @} **/
+
 
 #endif  // DATAFLASH_SIZES_H_
 

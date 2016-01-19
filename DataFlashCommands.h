@@ -1,6 +1,6 @@
 /**************************************************************************//**
  * @file DataFlashCommands.h
- * @brief AT45DBxxxD commands opcodes.
+ * @brief AT45DBxxxD commands opcodes and most AT45DBxxxE opcodes.
  *
  * @par Copyright: 
  * - Copyright (C) 2010-2011 by Vincent Cruz.
@@ -100,7 +100,24 @@
 #define DATAFLASH_PAGE_THROUGH_BUFFER_1 0x82
 /** Main Memory Page Program Through Buffer 2 **/
 #define DATAFLASH_PAGE_THROUGH_BUFFER_2 0x85
+
+/** Commands below are unique to the AT45DBxxxE series UNTESTED**/
+#ifdef DATAFLASH_E_SERIES
+/** Program/Erase suspend UNTESTED**/
+#define DATAFLASH_PROGRAM_ERASE_SUSPEND 0xB0
+/** Program/Erase resume UNTESTED**/
+#define DATAFLASH_PROGRAM_ERASE_RESUME 0xD0
+/** Read-Modify-Write through Buffer 1 UNTESTED**/
+#define DATAFLASH_READ_MODIFY_WRITE_BUFFER_1 0x58
+/** Read-Modify-Write through Buffer 2 UNTESTED**/
+#define DATAFLASH_READ_MODIFY_WRITE_BUFFER_2 0x59
+#endif
+
 /** @} **/
+
+
+
+
 
 /**
  * @defgroup ProtectionSecurity_Commands Protection and Security Commands
@@ -134,6 +151,9 @@
 #define DATAFLASH_SECTOR_LOCKDOWN_1 0x2A
 #define DATAFLASH_SECTOR_LOCKDOWN_2 0x7F
 #define DATAFLASH_SECTOR_LOCKDOWN_3 0x30
+
+
+
 /** Program Security Register **/
 #define DATAFLASH_PROGRAM_SECURITY_REGISTER_0 0x9B
 #define DATAFLASH_PROGRAM_SECURITY_REGISTER_1 0x00
@@ -147,6 +167,14 @@
 #define DATAFLASH_READ_SECTOR_LOCKDOWN_REGISTER 0x35
 /** Read Security Register **/
 #define DATAFLASH_READ_SECURITY_REGISTER 0x77
+
+#ifdef DATAFLASH_E_SERIES
+/** Freeze Sector Lockdown **/
+#define DATAFLASH_FREEZE_SECTOR_LOCKDOWN_0 0x34
+#define DATAFLASH_FREEZE_SECTOR_LOCKDOWN_1 0x55
+#define DATAFLASH_FREEZE_SECTOR_LOCKDOWN_2 0xAA
+#define DATAFLASH_FREEZE_SECTOR_LOCKDOWN_3 0x40
+#endif
 /** @} **/
 
 /**
@@ -173,6 +201,26 @@
 #define DATAFLASH_STATUS_REGISTER_READ 0xD7
 /** Manufacturer and Device ID Read **/
 #define DATAFLASH_READ_MANUFACTURER_AND_DEVICE_ID 0x9F
+
+/** AT45DBxxxE series additional commands UNTESTED**/
+#ifdef DATAFLASH_E_SERIES
+/** Configure Power of 2 (Binary) Page Size **/
+#define DATAFLASH_CONFIGURE_BINARY_PAGE_SIZE_0 0x3D
+#define DATAFLASH_CONFIGURE_BINARY_PAGE_SIZE_1 0x2A
+#define DATAFLASH_CONFIGURE_BINARY_PAGE_SIZE_2 0x80
+#define DATAFLASH_CONFIGURE_BINARY_PAGE_SIZE_3 0xA6
+/** Configure Standard DataFlash Page Size **/
+#define DATAFLASH_CONFIGURE_STANDARD_PAGE_SIZE_0 0x3D
+#define DATAFLASH_CONFIGURE_STANDARD_PAGE_SIZE_1 0x2A
+#define DATAFLASH_CONFIGURE_STANDARD_PAGE_SIZE_2 0x80
+#define DATAFLASH_CONFIGURE_STANDARD_PAGE_SIZE_3 0xA7
+/** Software Reset UNTESTED - WHO KNOWS WHAT HAPPENS HERE**/
+#define DATAFLASH_SOFTWARE_RESET_0 0xF0
+#define DATAFLASH_SOFTWARE_RESET_1 0x00
+#define DATAFLASH_SOFTWARE_RESET_2 0x00
+#define DATAFLASH_SOFTWARE_RESET_3 0x00
+#endif
+
 /** @} **/
 
 /**
