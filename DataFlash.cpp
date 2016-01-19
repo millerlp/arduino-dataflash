@@ -542,7 +542,9 @@ void DataFlash::pageToBuffer(uint16_t page, uint8_t bufferNum)
 
     reEnable();
 
-    /* Send opcode */
+    /* Send opcode. The ? operator means that if bufferNum is 0, 
+     buffer1 will be used,  and if bufferNum is 1, buffer 2 will 
+     get used. */
     SPI.transfer(bufferNum ? DATAFLASH_TRANSFER_PAGE_TO_BUFFER_2 :
                              DATAFLASH_TRANSFER_PAGE_TO_BUFFER_1);
 
