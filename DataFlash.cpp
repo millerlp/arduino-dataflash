@@ -602,6 +602,7 @@ void DataFlash::blockErase(uint16_t block)
      * For all DataFlashes 011D to 642D the number of trailing don't care bits
      * is equal to the number of page bits plus 3 (a block consists of 8 (1<<3)
      * pages), and always larger than 8 so the third byte is always 0. */
+	 // LPM: need to check that this also works for E-series chips
     uint8_t rightShift = m_bufferSize + 3 - 8;
     block >>= rightShift;
     SPI.transfer(highByte(block)); 
@@ -791,7 +792,7 @@ void DataFlash::resumeFromDeepPowerDown()
 
 /**
  * Reset device via the reset pin.
- * If no reset pint was specified (with begin()), this does nothing.
+ * If no reset pin was specified (with begin()), this does nothing.
  **/
 void DataFlash::hardReset()
 {

@@ -157,7 +157,8 @@
  * LPM note: Only applies to Byte 1 of the status register on E-series
  * devices. The value for the AT45DB641E is 1111b, so use 0x3C below
  **/
-#define AT45_SIZE_CODE 0x2C  // 0x2C for AT45DB161D, 0x3C for AT45DB641E
+//#define AT45_SIZE_CODE 0x2C  // 0x2C for AT45DB161D
+#define AT45_SIZE_CODE 0x3C // 0x3C for AT45DB641E
 /**
  * @}
  **/
